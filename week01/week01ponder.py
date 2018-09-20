@@ -33,7 +33,7 @@ def gaussian_classifier(random_seed, split):
 
     right = sum([1 for x in range(len(targets_predicted)) if targets_predicted[x] == iris_target_test[x]])
 
-    print("Percentage correct for built-in Gaussian classifier: " + str(right / (len(targets_predicted)) * 100))
+    print("Percentage correct for built-in Gaussian classifier: " + str(right / (len(targets_predicted)) * 100) + "%")
 
 
 def hard_coded_classifier(random_seed, split):
@@ -51,11 +51,11 @@ def hard_coded_classifier(random_seed, split):
 
     right = sum([1 for x in range(len(targets_predicted)) if targets_predicted[x] == iris_target_test[x]])
 
-    print("Percentage correct for hard coded classifier: " + str(int(right / (len(targets_predicted)) * 1000) / 10.0))
+    print("Percentage correct for hard coded classifier: " + str(int(right / (len(targets_predicted)) * 1000) / 10.0) + "%")
 
 
 if __name__ == "__main__":
-    classifier = "h"
+    classifier_symbol = "h"
     test_split = 0.3
     seed = 42
 
@@ -63,7 +63,7 @@ if __name__ == "__main__":
         if 0 < float(sys.argv[2]) < 1 < int(sys.argv[1]) < 10000 and (sys.argv[3] == 'g' or sys.argv[3] == 'h'):
             seed = int(sys.argv[1])
             test_split = float(sys.argv[2])
-            classifier = str(sys.argv[3])
+            classifier_symbol = str(sys.argv[3])
         else:
             print("Command-line arguments were not entered correctly. Please try again")
             if type(sys.argv[1]) is int:
@@ -80,7 +80,7 @@ if __name__ == "__main__":
         print("'h' (hardcoded, default)")
         print("'g' (built-in Gaussian)")
 
-    if classifier == "h":
+    if classifier_symbol == "h":
         hard_coded_classifier(seed, test_split)
-    elif classifier == "g":
+    elif classifier_symbol == "g":
         gaussian_classifier(seed, test_split)
