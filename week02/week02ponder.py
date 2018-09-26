@@ -23,7 +23,7 @@ class HardCodedModel:
         distances_from_item = {}
         for i in range(len(self.data)):
             for j in range(len(item)):
-                distance += abs(item[j] - self.data[i][j])
+                distance += (item[j] - self.data[i][j])**2
             distances_from_item[distance] = self.targets[i]
             distance = 0
         ordered_distances = collections.OrderedDict(sorted(distances_from_item.items()))
@@ -33,16 +33,21 @@ class HardCodedModel:
 
 
 class HardCodedClassifier:
+    @staticmethod
     def fit(self, data, targets):
         return HardCodedModel(data, targets)
 
 
 def get_list(split):
+    # The ecoli dataset.
     data = read_info()
     data, target = parse_ecoli(data)
     return model_selection.train_test_split(data, target, test_size=split)
+
+    # The Iris dataset
     # iris = datasets.load_iris()
     # return model_selection.train_test_split(iris.data, iris.target, test_size=split)
+
 
 def parse_ecoli(passed_in_data):
     tmp_data = []
@@ -63,6 +68,7 @@ def parse_ecoli(passed_in_data):
     data_data = np.array(data_data)
     target_data = np.array([item for sublist in target_data for item in sublist])
     return data_data, target_data
+
 
 def percentage_correct(predicted, test):
     right = sum([1 for x in range(len(predicted)) if predicted[x] == test[x]])
