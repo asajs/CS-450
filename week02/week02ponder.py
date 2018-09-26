@@ -5,6 +5,7 @@ import numpy as np
 import sys
 import collections
 
+
 class HardCodedModel:
     def __init__(self, data, targets):
         self.data = data
