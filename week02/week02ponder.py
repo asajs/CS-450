@@ -1,20 +1,22 @@
 from sklearn import datasets
 from sklearn import model_selection
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.preprocessing import StandardScaler
 import numpy as np
 import sys
 import collections
 
 
-class HardCodedModel:
+class kNNModel:
     def __init__(self, data, targets):
-        self.data = data
+        scale = StandardScaler()
+        self.data = scale.fit_transform(X=data, y=None)
         self.targets = targets
 
     def predict(self, data_test, k):
         prediction = []
-
-        for item in data_test:
+        scale = StandardScaler()
+        for item in scale.fit_transform(X=data_test, y=None):
             prediction.append(self.predict_one_manual(item, k))
 
         return prediction
@@ -33,10 +35,9 @@ class HardCodedModel:
         return result.most_common(1)[0][0]
 
 
-class HardCodedClassifier:
-    @staticmethod
+class kNNClassifier:
     def fit(self, data, targets):
-        return HardCodedModel(data, targets)
+        return kNNModel(data, targets)
 
 
 def get_list(split):
@@ -76,13 +77,13 @@ def percentage_correct(predicted, test):
     return str(int(right / (len(predicted)) * 1000) / 10.0)
 
 
-def hard_coded_classifier(data_train, data_test, target_train, target_test, k):
-    classifier = HardCodedClassifier()
+def knn_classifier(data_train, data_test, target_train, target_test, k):
+    classifier = kNNClassifier()
     iris_model = classifier.fit(data_train, target_train)
 
     targets_predicted = iris_model.predict(data_test, k)
 
-    print("Percentage correct for hard coded classifier: " + percentage_correct(targets_predicted, target_test) + "%")
+    print("Percentage correct for class kNN classifier: " + percentage_correct(targets_predicted, target_test) + "%")
 
 
 def k_nearest_neighbors(data_train, data_test, target_train, target_test, k):
@@ -106,9 +107,9 @@ def read_info():
 
 if __name__ == "__main__":
     test_split = 0.3
-    n = 3
+    k = 3
 
     main_data_train, main_data_test, main_target_train, main_target_test = get_list(test_split)
 
-    hard_coded_classifier(main_data_train, main_data_test, main_target_train, main_target_test, n)
-    k_nearest_neighbors(main_data_train, main_data_test, main_target_train, main_target_test, n)
+    knn_classifier(main_data_train, main_data_test, main_target_train, main_target_test, k)
+    k_nearest_neighbors(main_data_train, main_data_test, main_target_train, main_target_test, k)
