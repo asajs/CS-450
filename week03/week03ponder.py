@@ -23,16 +23,16 @@ class kNNModel:
 
     def predict_one_manual(self, item, k):
         distance = 0
-        distances_from_item = {}
+        distances_from_item = []
         for i in range(len(self.data)):
             for j in range(len(item)):
                 distance += (item[j] - self.data[i][j])**2
-            distances_from_item[distance] = self.targets[i]
+            distances_from_item.append((distance, self.targets[i]))
             distance = 0
-        ordered_distances = collections.OrderedDict(sorted(distances_from_item.items()))
-        neighbors = list(ordered_distances.values())[:k]
-        result = collections.Counter(neighbors)
-        return result.most_common(1)[0][0]
+        distances_from_item = sorted(distances_from_item)
+        common = [item[1] for item in distances_from_item[:k]]
+        common = collections.Counter(common)
+        return common.most_common(1)[0][0]
 
 
 class kNNClassifier:
@@ -40,15 +40,14 @@ class kNNClassifier:
         return kNNModel(data, targets)
 
 
-def get_list(split):
+def get_list():
     # The ecoli dataset.
-    # data = read_info()
-    # data, target = parse_ecoli(data)
-    # return model_selection.train_test_split(data, target, test_size=split)
+    data = read_info("ecoli.txt")
+    return parse_ecoli(data)
 
     # The Iris dataset
-    iris = datasets.load_iris()
-    return model_selection.train_test_split(iris.data, iris.target, test_size=split)
+    # iris = datasets.load_iris()
+    # return iris.data, iris.target
 
 
 def parse_ecoli(passed_in_data):
@@ -74,28 +73,38 @@ def parse_ecoli(passed_in_data):
 
 def percentage_correct(predicted, test):
     right = sum([1 for x in range(len(predicted)) if predicted[x] == test[x]])
-    return str(int(right / (len(predicted)) * 1000) / 10.0)
+    return int(right / (len(predicted)) * 1000) / 10.0
 
 
-def knn_classifier(data_train, data_test, target_train, target_test, k):
+def knn_classifier(data_train, data_test, target_train, target_test, k, n):
     classifier = kNNClassifier()
     iris_model = classifier.fit(data_train, target_train)
 
     targets_predicted = iris_model.predict(data_test, k)
 
-    print("Percentage correct for class kNN classifier: " + percentage_correct(targets_predicted, target_test) + "%")
+    return percentage_correct(targets_predicted, target_test)
 
 
-def k_nearest_neighbors(data_train, data_test, target_train, target_test, k):
+def k_nearest_neighbors(data_train, data_test, target_train, target_test, k, n):
     classifier = KNeighborsClassifier(n_neighbors=k)
     model = classifier.fit(data_train, target_train)
     targets_predicted = model.predict(data_test)
 
-    print("Percentage correct for library classifier: " + percentage_correct(targets_predicted, target_test) + "%")
+    return percentage_correct(targets_predicted, target_test)
 
 
-def read_info():
-    filename = "ecoli.txt"
+def n_folder(n, data, target, k):
+    kf = model_selection.KFold(n_splits=n, shuffle=True)
+    average_own = []
+    average_builtin = []
+    for train_index, test_index in kf.split(data):
+        average_own.append(knn_classifier(data[train_index], data[test_index], target[train_index], target[test_index], k, n))
+        average_builtin.append(k_nearest_neighbors(data[train_index], data[test_index], target[train_index], target[test_index], k, n))
+    print("Average score for built in kNN classifier: " + str(sum(average_builtin) / n) + "%")
+    print("Average score for custom kNN classifier: " + str(sum(average_own) / n) + "%")
+
+
+def read_info(filename):
     try:
         with open(filename, 'r') as f:
             dataset = f.read()
@@ -107,9 +116,11 @@ def read_info():
 
 if __name__ == "__main__":
     test_split = 0.3
-    k = 10
+    k = 3
+    n = 10
 
-    main_data_train, main_data_test, main_target_train, main_target_test = get_list(test_split)
+    data, target = get_list()
 
-    knn_classifier(main_data_train, main_data_test, main_target_train, main_target_test, k)
-    k_nearest_neighbors(main_data_train, main_data_test, main_target_train, main_target_test, k)
+    n_folder(n, data, target, k)
+
+
