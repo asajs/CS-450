@@ -3,8 +3,9 @@ from sklearn import model_selection
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
 import numpy as np
-import sys
 import collections
+import sys
+import pandas as pd
 
 
 class kNNModel:
@@ -41,13 +42,34 @@ class kNNClassifier:
 
 
 def get_list():
-    # The ecoli dataset.
-    data = read_info("ecoli.txt")
-    return parse_ecoli(data)
+    # The ecoli dataset
+    # data = read_info("ecoli.txt")
+    # return parse_ecoli(data)
+
+    # The cars dataset
+    data = read_info("cars.txt")
+    return parse_cars(data)
 
     # The Iris dataset
     # iris = datasets.load_iris()
     # return iris.data, iris.target
+
+
+def parse_cars(passed_in_data):
+    headers = ["buying", "maint", "doors", "persons", "lug_boot", "safety", "class"]
+    tmp_data = []
+    inner_data = []
+    for item in passed_in_data.split('\n'):
+        for data_point in item.split(','):
+            inner_data.append(data_point)
+        tmp_data.append(inner_data)
+        inner_data = []
+    data = pd.DataFrame(np.array(tmp_data), columns=headers)
+    replace_doors_persons = {"doors": {"5more": 5, "4": 4, "3": 3, "2": 2},
+                     "persons": {"more": 6, "4": 4, "2": 2}}
+    data.replace(replace_doors_persons, inplace=True)
+    # TODO: explode columns
+    print(data.dtypes)
 
 
 def parse_ecoli(passed_in_data):
@@ -73,7 +95,7 @@ def parse_ecoli(passed_in_data):
 
 def percentage_correct(predicted, test):
     right = sum([1 for x in range(len(predicted)) if predicted[x] == test[x]])
-    return int(right / (len(predicted)) * 1000) / 10.0
+    return right / len(predicted) * 100
 
 
 def knn_classifier(data_train, data_test, target_train, target_test, k, n):
@@ -100,8 +122,8 @@ def n_folder(n, data, target, k):
     for train_index, test_index in kf.split(data):
         average_own.append(knn_classifier(data[train_index], data[test_index], target[train_index], target[test_index], k, n))
         average_builtin.append(k_nearest_neighbors(data[train_index], data[test_index], target[train_index], target[test_index], k, n))
-    print("Average score for built in kNN classifier: " + str(sum(average_builtin) / n) + "%")
-    print("Average score for custom kNN classifier: " + str(sum(average_own) / n) + "%")
+    print("Average score for built in kNN classifier: {:0.1f}%".format(sum(average_builtin) / n))
+    print("Average score for custom kNN classifier: {:0.1f}%".format(sum(average_own) / n))
 
 
 def read_info(filename):
@@ -116,8 +138,8 @@ def read_info(filename):
 
 if __name__ == "__main__":
     test_split = 0.3
-    k = 3
-    n = 10
+    k = 9
+    n = 2
 
     data, target = get_list()
 
