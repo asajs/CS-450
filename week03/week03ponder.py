@@ -9,21 +9,21 @@ if __name__ == "__main__":
     n = 2
     delta = 4.0
 
-    # print("\nEcoli dataset")
-    # ecoli_data, ecoli_target = parse.get_ecoli_list()
-    # classifier.n_folder_class(n, ecoli_data, ecoli_target, k)
-    #
-    # print("\nAutism dataset")
-    # autism_data, autism_target = parse.get_autism_list()
-    # classifier.n_folder_class(n, autism_data, autism_target, k)
-    #
-    # print("\nCar dataset")
-    # car_data, car_target = parse.get_cars_list()
-    # classifier.n_folder_class(n, car_data, car_target, k)
-    #
-    # print("\nIris dataset")
-    # iris_data, iris_target = parse.get_iris_list()
-    # classifier.n_folder_class(n, iris_data, iris_target, k)
+    print("\nEcoli dataset")
+    ecoli_data, ecoli_target = parse.get_ecoli_list()
+    classifier.n_folder_class(n, ecoli_data, ecoli_target, k)
+
+    print("\nAutism dataset")
+    autism_data, autism_target = parse.get_autism_list()
+    classifier.n_folder_class(n, autism_data, autism_target, k)
+
+    print("\nCar dataset")
+    car_data, car_target = parse.get_cars_list()
+    classifier.n_folder_class(n, car_data, car_target, k)
+
+    print("\nIris dataset")
+    iris_data, iris_target = parse.get_iris_list()
+    classifier.n_folder_class(n, iris_data, iris_target, k)
 
     print("\nmpg dataset")
     mpg_data, mpg_target = parse.get_mpg_list()
