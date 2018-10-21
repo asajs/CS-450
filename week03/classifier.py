@@ -36,5 +36,5 @@ def n_folder_class(n, data, target, k):
     for train_index, test_index in kf.split(data):
         average_own.append(knn_classifier(data[train_index], data[test_index], target[train_index], target[test_index], k))
         average_builtin.append(k_nearest_neighbors_class(data[train_index], data[test_index], target[train_index], target[test_index], k))
-    print("Average score for built in kNN classifier: {:0.1f}%".format(sum(average_builtin) / n))
+    print("Average score for library kNN classifier: {:0.1f}%".format(sum(average_builtin) / n))
     print("Average score for custom kNN classifier: {:0.1f}%".format(sum(average_own) / n))
