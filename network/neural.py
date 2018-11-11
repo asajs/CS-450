@@ -1,6 +1,5 @@
 import tensorflow as tf
 from tensorflow import keras
-import numpy as np
 from sklearn import model_selection
 from sklearn import preprocessing
 import matplotlib.pyplot as plot
@@ -33,8 +32,15 @@ def adult():
     model.compile(optimizer=tf.train.AdamOptimizer(),
                   loss="binary_crossentropy",
                   metrics=["accuracy"])
-    early_stop = keras.callbacks.EarlyStopping(monitor="val_loss", patience=20)
-    model.fit(train_data, train_target, epochs=200, validation_split=0.2, verbose=0, callbacks=[early_stop])
+    early_stop = keras.callbacks.EarlyStopping(monitor="val_loss", patience=5)
+    history = model.fit(train_data, train_target, epochs=50, validation_split=0.2, verbose=0, callbacks=[early_stop])
+    plot.plot(history.history['acc'])
+    plot.plot(history.history['val_acc'])
+    plot.title('Census income Accuracy')
+    plot.ylabel("Accuracy")
+    plot.xlabel("Epoch")
+    plot.legend(["train", "validation"], loc="lower right")
+    plot.show()
     accuracy = model.evaluate(test_data, test_target, verbose=0)
     print("Accuracy of adult/census income predictions: {:2.1f}%".format(accuracy[1]*100))
 
@@ -62,7 +68,14 @@ def cars():
                   metrics=['accuracy'])
 
     early_stop = keras.callbacks.EarlyStopping(monitor='val_loss', patience=30)
-    model.fit(train_data, train_target, epochs=500, validation_split=0.2, verbose=0, callbacks=[early_stop])
+    history = model.fit(train_data, train_target, epochs=500, validation_split=0.2, verbose=0, callbacks=[early_stop])
+    plot.plot(history.history['acc'])
+    plot.plot(history.history['val_acc'])
+    plot.title('Car Accuracy')
+    plot.ylabel("Accuracy")
+    plot.xlabel("Epoch")
+    plot.legend(["train", "validation"], loc="upper left")
+    plot.show()
     accuracy = model.evaluate(test_data, test_target, verbose=0)
     print("The accuracy of the algorithm: {:2.1f}%".format(accuracy[1] * 100))
     print("The loss of the algorithm: {:1.4f}".format(accuracy[0]))
@@ -89,7 +102,15 @@ def mpg():
     ])
 
     model.compile(loss='mse', optimizer=keras.optimizers.Adam(), metrics=['mae'])
-    model.fit(train_data, train_target, epochs=250, verbose=0)
+    early_stop = keras.callbacks.EarlyStopping(monitor='val_loss', patience=15)
+    history = model.fit(train_data, train_target, epochs=500, validation_split=0.2, verbose=0, callbacks=[early_stop])
+    plot.plot(history.history['loss'])
+    plot.plot(history.history['val_loss'])
+    plot.title('MPG Loss')
+    plot.ylabel("Loss")
+    plot.xlabel("Epoch")
+    plot.legend(["train", "validation"], loc="upper right")
+    plot.show()
     loss, mae = model.evaluate(test_data, test_target, verbose=0)
     test_predictions = model.predict(test_data).flatten()
 
@@ -127,8 +148,15 @@ def fashion():
                   loss='sparse_categorical_crossentropy',
                   metrics=['accuracy'])
 
-    model.fit(train_images, train_lables, epochs=15, verbose=0)
-
+    early_stop = keras.callbacks.EarlyStopping(monitor='val_loss', patience=3)
+    history = model.fit(train_images, train_lables, epochs=50, validation_split=0.1, verbose=0, callbacks=[early_stop])
+    plot.plot(history.history['acc'])
+    plot.plot(history.history['val_acc'])
+    plot.title('Fashion Accuracy')
+    plot.ylabel("Accuracy")
+    plot.xlabel("Epoch")
+    plot.legend(["train", "validation"], loc="upper left")
+    plot.show()
     test_loss, test_acc = model.evaluate(test_images, test_labels, verbose=0)
 
     print("Fashion Test Accuracy: {:2.1f}".format(test_acc * 100))
@@ -136,7 +164,7 @@ def fashion():
 
 
 if __name__ == "__main__":
-    # fashion()
+    fashion()
     mpg()
-    # cars()
-    # adult()
+    cars()
+    adult()
